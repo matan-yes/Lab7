@@ -1,0 +1,39 @@
+import pandas as pd
+import  numpy as np
+import  matplotlib as plt
+
+#load file
+df = pd.read_csv("C:\\train_Loan.csv")
+
+#print frequency distribution of all attributes in training set
+for column in df:
+    print("\n Frequency Distribution of Attribute:"+ column)
+    print(df[column].value_counts())
+
+#print attributes datatype
+print (df.dtypes)
+
+
+#fill missing values married,gender,self_emploied
+df['Self_Employed'].fillna('No',inplace=True)
+df['Married'].fillna('No',inplace=True)
+print(df['Married'])
+df['Gender'].fillna('Male',inplace=True)
+
+def binning(col ,cut_points,labels=None):
+    minval = col.min()
+    maxval = col.max()
+
+    break_points = [minval] + cut_points + [maxval]
+
+    if not labels:
+         labels = range(len(cut_points)+1)
+
+    colBin = pd.cut(col,bins=break_points,labels=labels,include_lowest=True)
+    return colBin
+bins=[100,200,300]
+group_names = ['Low','Medioum','High','Extream']
+#distrcetization to LoanAmount
+df["LoanAmount_Bin"]=binning(df["LoanAmount"],bins,group_names)
+#outlier distrcetization to LoanAmount
+print(df[(np.abs(df.LoanAmount-df.LoanAmount.mean()) <= (3*df.LoanAmount.std()))])
